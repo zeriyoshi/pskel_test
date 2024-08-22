@@ -10,7 +10,7 @@ get_ext_dir() {
     echo "[Pskel] Development Containers workspace detected, use \"/workspaces/pskel/ext\"." >&2
     PSKEL_EXT_DIR="/workspaces/pskel/ext"
   else
-    if test -f "/ext/.gitkeep" && test $(cat "/ext/.gitkeep") = "pskel_uninitialized"; then
+    if test -f "/ext/.gitkeep" && test $(cat "/ext/.gitkeep") = "pskel_uninitialized" && ! test "x${1}" = "x--no-init"; then
        echo "[Pskel] Uninitialized project detected, initialize default skeleton." >&2
        cmd_init "skeleton"
     fi
@@ -43,7 +43,7 @@ EOF
     return 0
   fi
 
-  PSKEL_EXT_DIR="$(get_ext_dir)"
+  PSKEL_EXT_DIR="$(get_ext_dir --no-init)"
   /usr/local/bin/php "/usr/src/php/ext/ext_skel.php" --ext "${1}" --dir "/tmp" ${@}
   rm "${PSKEL_EXT_DIR}/.gitkeep"
   rsync -av "/tmp/${1}/" "${PSKEL_EXT_DIR}/"
@@ -151,7 +151,7 @@ cmd_coverage() {
 
   PSKEL_EXT_DIR="$(get_ext_dir)"
 
-  lcov --capture --directory "${PSKEL_EXT_DIR}" ${LCOV_OPTIONS} --exclude "/usr/local/include/*" "third_party/*" --output-file "${PSKEL_EXT_DIR}/lcov.info"
+  lcov --capture --directory "${PSKEL_EXT_DIR}" ${LCOV_OPTIONS} --exclude "/usr/local/include/*" --output-file "${PSKEL_EXT_DIR}/lcov.info"
   lcov --list "${PSKEL_EXT_DIR}/lcov.info"
 }
 
