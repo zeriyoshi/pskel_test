@@ -1,0 +1,4 @@
+/ext/*.dep
+/ext/*~
+*.DS_Store
+lcov.info
